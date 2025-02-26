@@ -1,5 +1,3 @@
-// ignore_for_file: sort_child_properties_last
-
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:iot_thai_moneyshare_project/views/money_result_ui.dart';
@@ -13,32 +11,33 @@ class MoneyInputUI extends StatefulWidget {
 
 class _MoneyInputUIState extends State<MoneyInputUI> {
   bool isTip = false;
-  //ตัวควบคุม TextField
+  // ตัวควบคุม TextField
   TextEditingController moneyCtrl = TextEditingController();
   TextEditingController personCtrl = TextEditingController();
   TextEditingController tipCtrl = TextEditingController();
 
-  //เมธอดแสดงข้อความเตือน
+  // เมธอดแสดงข้อความเตือน
   showWarningMSG(context, msg) async {
     await showDialog<void>(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('คำเตือน'),
-            content: Text(msg),
-            actions: [
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text(
-                  'ตกลง',
-                ),
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('คำเตือน'),
+          content: Text(msg),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                'ตกลง',
               ),
-            ],
-          );
-        });
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -64,7 +63,9 @@ class _MoneyInputUIState extends State<MoneyInputUI> {
               'assets/images/money.png',
               width: MediaQuery.of(context).size.width * 0.35,
             ),
+            // ช่องกรอกจำนวนเงิน
             TextField(
+              controller: moneyCtrl,  // เชื่อมต่อ controller
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
                 focusedBorder: UnderlineInputBorder(),
@@ -86,7 +87,9 @@ class _MoneyInputUIState extends State<MoneyInputUI> {
             SizedBox(
               height: 35.0,
             ),
+            // ช่องกรอกจำนวนคน
             TextField(
+              controller: personCtrl,  // เชื่อมต่อ controller
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
                 focusedBorder: UnderlineInputBorder(),
@@ -108,6 +111,7 @@ class _MoneyInputUIState extends State<MoneyInputUI> {
             SizedBox(
               height: 35.0,
             ),
+            // Checkbox สำหรับทิป
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -132,7 +136,9 @@ class _MoneyInputUIState extends State<MoneyInputUI> {
             SizedBox(
               height: 25.0,
             ),
+            // ช่องกรอกจำนวนเงินทิป (ถ้าทิปถูกเลือก)
             TextField(
+              controller: tipCtrl,  // เชื่อมต่อ controller
               enabled: isTip,
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
@@ -155,23 +161,24 @@ class _MoneyInputUIState extends State<MoneyInputUI> {
             SizedBox(
               height: 20.0,
             ),
+            // ปุ่มคำนวณ
             ElevatedButton(
               onPressed: () {
-                if (moneyCtrl.text.length == 0) {
-                  //แจ้งเตือนป้อนเงินด้วย
+                if (moneyCtrl.text.isEmpty) {
+                  // แจ้งเตือนหากไม่ได้ป้อนจำนวนเงิน
                   showWarningMSG(context, 'โปรดป้อนเงินด้วยครับ !!!!');
-                } else if (personCtrl.text.length == 0) {
-                  //แจ้งเตือนป้อนจำนวนคนด้วย
+                } else if (personCtrl.text.isEmpty) {
+                  // แจ้งเตือนหากไม่ได้ป้อนจำนวนคน
                   showWarningMSG(context, 'โปรดป้อนจำนวนคนด้วยครับ !!!!');
-                } else if (isTip == true && tipCtrl.text.length == 0) {
-                  //แจ้งเตือนป้อนเงินทิปด้วย
+                } else if (isTip == true && tipCtrl.text.isEmpty) {
+                  // แจ้งเตือนหากไม่ได้ป้อนเงินทิป
                   showWarningMSG(context, 'โปรดป้อนเงินทิปด้วยครับ !!!!');
                 } else {
-                  //คำนวณแล้วแสดงผลที่หน้าจอ MoneyResultUI()
+                  // คำนวณแล้วแสดงผลที่หน้าจอ MoneyResultUI()
                   double money = double.parse(moneyCtrl.text);
                   int person = int.parse(personCtrl.text);
                   double tip = isTip == true ? double.parse(tipCtrl.text) : 0;
-                  double moneyShare=(money+tip)/person;
+                  double moneyShare = (money + tip) / person;
 
                   Navigator.push(
                     context,
@@ -185,7 +192,6 @@ class _MoneyInputUIState extends State<MoneyInputUI> {
                     ),
                   );
                 }
-                ;
               },
               child: Text(
                 "คำนวณ",
@@ -205,8 +211,18 @@ class _MoneyInputUIState extends State<MoneyInputUI> {
             SizedBox(
               height: 10.0,
             ),
+            // ปุ่มยกเลิก
             ElevatedButton.icon(
-              onPressed: () {},
+              onPressed: () {
+                // ให้หน้าจอกลลับมาเป็นเไหมือนตอนเริ่มต้น
+                setState(() {
+                  moneyCtrl.clear();
+                  personCtrl.clear();
+                  tipCtrl.clear();
+                  isTip = false;
+                  tipCtrl.text = '';
+                });
+              },
               icon: Icon(
                 Icons.cancel_outlined,
                 color: Colors.white,
